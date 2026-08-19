@@ -15,7 +15,7 @@ Market cap is calculated as:
 
 For the WBNB pair, the USDT-denominated price is derived from the token/WBNB pool multiplied by the PancakeSwap WBNB/USDT pool price. For an additional quote asset, the quote-denominated price is multiplied by the quote/WBNB bridge and the WBNB/USDT price. If the WBNB/USDT pair is unavailable, the implementation falls back to WBNB/BUSD. The current WBNB/USDT spot price is shown next to the market cap.
 
-Both BSC transports are read from `.env`:
+Both BSC transports can be configured through `.env`:
 
 ```env
 VITE_BSC_HTTPS_URL=https://your-bsc-json-rpc
@@ -23,6 +23,7 @@ VITE_BSC_WS_URL=wss://your-bsc-websocket-rpc
 ```
 
 Multiple endpoints can be separated with commas and are tried in order. Vite exposes every `VITE_*` value to the browser bundle, so do not put a private API key here unless browser exposure is acceptable.
+When `VITE_BSC_HTTPS_URL` is omitted, the app falls back to public BSC RPC endpoints and keeps using 5-second polling. For production deployments, configure a dedicated HTTPS RPC endpoint in the hosting platform's environment variables for better rate limits.
 
 The footer shows the latest block number and block delay in milliseconds, calculated as `browser time - block timestamp`. WebSocket mode receives block timestamps from `newHeads`; polling mode reads `eth_getBlockByNumber("latest")` every 5 seconds. BSC block timestamps have second-level precision, so the millisecond value includes the local sampling time.
 

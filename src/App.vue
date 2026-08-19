@@ -35,7 +35,13 @@ function parseEndpointList(value) {
   return [...new Set((value || '').split(',').map((url) => url.trim()).filter(Boolean))]
 }
 
-const RPC_URLS = parseEndpointList(import.meta.env.VITE_BSC_HTTPS_URL)
+const PUBLIC_BSC_RPC_URLS = [
+  'https://bsc-dataseed.binance.org',
+  'https://bsc-dataseed1.defibit.io',
+  'https://bsc-dataseed1.ninicoin.io',
+]
+const configuredRpcUrls = parseEndpointList(import.meta.env.VITE_BSC_HTTPS_URL)
+const RPC_URLS = configuredRpcUrls.length ? configuredRpcUrls : PUBLIC_BSC_RPC_URLS
 const WS_URLS = parseEndpointList(import.meta.env.VITE_BSC_WS_URL)
 const PANCAKE_SYNC_TOPIC = '0x1c411e9a96e071241c2f21f7726b17ae89e3cab4c78be50e062b03a9fffbbad1'
 const PANCAKE_PAIR_CREATED_TOPIC = '0x0d3648bd0f6ba80134a33ba9275ac585d9d315f0ad8355cddefde31afa28d0e9'
@@ -201,7 +207,7 @@ async function withRpcSlot(task) {
 }
 
 async function rpcCall(method, params = []) {
-  if (!RPC_URLS.length) throw new Error('VITE_BSC_HTTPS_URL is not configured')
+  if (!RPC_URLS.length) throw new Error('未配置 BSC RPC，请设置 VITE_BSC_HTTPS_URL')
   return withRpcSlot(async () => {
     let lastError
     for (const url of RPC_URLS) {
